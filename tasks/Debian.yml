@@ -1,0 +1,75 @@
+---
+
+#
+# Set java_packages parameter
+#
+
+- name: Debian | Define openjdk java_packages
+  set_fact:
+    java_packages: "{{ java.openjdk.debian_packages }}"
+  when: (java_packages is not defined) and (java_jdk_type == 'openjdk')
+
+- name: Debian | Define Oracle java_packages
+  set_fact:
+    java_packages: "{{ java.oracle.debian_packages }}"
+  when: (java_packages is not defined) and (java_jdk_type == 'oracle')
+
+#
+# Add/Update APT repository
+#
+
+- name: Debian | Add APT repo for openjdk 8
+  apt_repository:
+    repo: "{{ deb.debian.apt_backports_repo }}"
+    state: present
+  when: (java_version == '8') and (java_jdk_type == 'openjdk')
+
+- name: Debian | Install WebUpd8 APT key
+  apt_key:
+    id: "{{ deb.ubuntu.webupd8_key }}"
+    keyserver: "{{ deb.ubuntu.webupd8_keyserver }}"
+    state: present
+  register: get_webupd8_key
+  until: get_webupd8_key|success
+  retries: 5
+  delay: 10
+  when: java_jdk_type == 'oracle'
+
+- name: Debian | App WebUpd8 APT repo
+  apt_repository:
+    repo: "{{ deb.ubuntu.webupd8_repo }}"
+    state: present
+  when: java_jdk_type == 'oracle'
+
+- name: Debian | Update APT cache
+  apt: update_cache=yes cache_valid_time=86400
+
+#
+# Install/Configure Java packages
+#
+
+- name: Debian | Accept Oracle Java License
+  debconf:
+    name: "oracle-java{{ java_version }}-installer"
+    question: 'shared/accepted-oracle-license-v1-1'
+    value: 'true'
+    vtype: 'select'
+
+- name: Debian | Ensure Java is installed
+  apt:
+    name: "{{ item }}"
+    state: installed
+  with_items: "{{ java_packages }}"
+
+- name: Debian | Update system openjdk Java version
+  alternatives:
+    name: java
+    path: "/usr/lib/jvm/java-{{ java_version }}-openjdk-amd64/jre/bin/java"
+  when: java_set_as_default and (java_jdk_type == 'openjdk')
+
+- name: Debian | Update system Oracle Java version
+  alternatives:
+    name: java
+    path: "/usr/lib/jvm/java-{{ java_version }}-oracle/jre/bin/java"
+  when: java_set_as_default and (java_jdk_type == 'oracle')
+

@@ -1,0 +1,21 @@
+---
+
+java:
+  openjdk:
+    debian_packages:
+      - openjdk-7-jdk
+    redhat_packages:
+      - java-1.7.0-openjdk
+    freebsd_packages:
+      - openjdk
+  oracle:
+    debian_packages:
+      - oracle-java7-installer
+
+deb:
+  debian:
+    apt_backports_repo: 'deb http://http.debian.net/debian jessie-backports main'
+  ubuntu:
+    webupd8_key: 'EEA14886'
+    webupd8_keyserver: 'keyserver.ubuntu.com'
+    webupd8_repo: 'deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main'

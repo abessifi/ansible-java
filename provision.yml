@@ -1,0 +1,6 @@
+---
+
+- hosts: ansible-vm
+  sudo: yes
+  roles:
+    - ansible-java

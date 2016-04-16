@@ -1,0 +1,25 @@
+---
+
+#
+# Set java_packages parameter
+#
+
+- name: RedHat | Define openjdk java_packages
+  set_fact:
+    java_packages: "{{ java.openjdk.redhat_packages }}"
+  when: (java_packages is not defined) and (java_jdk_type == 'openjdk')
+
+- name: RedHat | Define Oracle java_packages
+  set_fact:
+    java_packages: "{{ java.oracle.redhat_packages }}"
+  when: (java_packages is not defined) and (java_jdk_type == 'oracle')
+
+#
+# Install/Configure Java packages
+#
+
+- name: RedHat | Ensure Java is installed
+  yum:
+    name: "{{ item }}"
+    state: installed
+  with_items: "{{ java_packages }}"

@@ -1,0 +1,25 @@
+---
+
+galaxy_info:
+  author: Ahmed Bessifi
+  description: Java for GNU/Linux systems
+  license: "MIT"
+  min_ansible_version: 1.9
+  platforms:
+    - name: EL
+      versions:
+        - 6
+        - 7
+    - name: Debian
+      versions:
+        - 8
+    - name: Ubuntu
+      versions:
+        - Trusty
+    - name: FreeBSD
+      versions:
+        - 10.2
+  galaxy_tags:
+    - development
+    - system
+    - web
