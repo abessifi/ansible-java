@@ -1,25 +1,83 @@
 ---
 
 #
-# Set java_packages parameter
+# Set java_package parameter if java_jdk_type is 'openjdk'
 #
 
-- name: RedHat | Define openjdk java_packages
+- name: RedHat | Define openjdk java_package
   set_fact:
-    java_packages: "{{ java.openjdk.redhat_packages }}"
-  when: (java_packages is not defined) and (java_jdk_type == 'openjdk')
-
-- name: RedHat | Define Oracle java_packages
-  set_fact:
-    java_packages: "{{ java.oracle.redhat_packages }}"
-  when: (java_packages is not defined) and (java_jdk_type == 'oracle')
+    java_package: "{{ java.openjdk.redhat_package }}"
+  when: (java_package|trim == '') and (java_jdk_type == 'openjdk')
 
 #
-# Install/Configure Java packages
+# Download jdk rpm package if java_jdk_type is 'oracle'
 #
 
-- name: RedHat | Ensure Java is installed
+- name: Redhat | Check oracle jdk package
+  stat:
+    path: "{{ rh.redhat.rpm_download_directory }}/{{ rh.redhat.oracle_jdk_rpm_package }}"
+  register: rpm_package
+  when: java_jdk_type == 'oracle'
+
+- name: RedHat | Download Oracle JDK RPM package
+  uri:
+    url: "{{ rh.redhat.oracle_jdk_rpm_url }}"
+    dest: "{{ rh.redhat.rpm_download_directory }}"
+    HEADER_Cookie: "{{ rh.redhat.oracle_jdk_download_cookie }}"
+  when: (java_jdk_type == 'oracle') and not rpm_package.stat.exists
+
+#
+# Install/Configure Java package(s)
+#
+
+- name: RedHat | Install Java Oracle
   yum:
-    name: "{{ item }}"
+    name: "{{ rh.redhat.rpm_download_directory }}/{{ rh.redhat.oracle_jdk_rpm_package }}"
     state: installed
-  with_items: "{{ java_packages }}"
+  register: rpm_installation
+  when: java_jdk_type == 'oracle'
+
+- name: RedHat | Install Java OpenJDK
+  yum:
+    name: "{{ java_package }}"
+    state: installed
+  when: (java_package|trim != '') and (java_jdk_type == 'openjdk')
+
+# TODO:
+# Create a 'get_package' module that takes the package name/path
+# and returns the corresponding infos (name, version, ..)
+- name: RedHat | Get OpenJDK jdk package version
+  shell: "rpm -qi {{ java_package }} | grep 'Version' | awk '{print $NF}'"
+  register: jdk_rpm_package_version
+  when: java_jdk_type == 'openjdk'
+
+- name: RedHat | Get OpenJDK jdk package release
+  shell: "rpm -qi {{ java_package }} | grep 'Release' | awk '{print $NF}'"
+  register: jdk_rpm_package_release
+  when: java_jdk_type == 'openjdk'
+
+- name: RedHat | Get OpenJDK jdk package architecture
+  shell: "rpm -qi {{ java_package }} | grep 'Architecture' | awk '{print $NF}'"
+  register: jdk_rpm_package_arch
+  when: java_jdk_type == 'openjdk'
+
+- name: RedHat | Get Oracle jdk package version
+  shell: "rpm -qip {{ rh.redhat.rpm_download_directory }}/{{ rh.redhat.oracle_jdk_rpm_package }} | grep 'Version' | awk '{print $NF}'"
+  register: jdk_rpm_package_version
+  when: java_jdk_type == 'oracle'
+
+- name: RedHat | Add Oracle Java 7 bin alternative
+  shell: "sudo alternatives --install /usr/bin/java java /usr/java/jdk{{jdk_rpm_package_version.stdout }}/jre/bin/java 1"
+  when: (java_jdk_type == 'oracle') and (java_version == '7')
+
+- name: RedHat | Set default OpenJDK Java version
+  alternatives:
+    name: java
+    path: "/usr/lib/jvm/{{ java_package }}-{{ jdk_rpm_package_version.stdout }}-{{ jdk_rpm_package_release.stdout }}.{{ jdk_rpm_package_arch.stdout }}/jre/bin/java"
+  when: java_set_as_default and (java_jdk_type == 'openjdk')
+
+- name: RedHat | Set default Oracle Java version
+  alternatives:
+    name: java
+    path: "/usr/java/jdk{{ jdk_rpm_package_version.stdout }}/jre/bin/java"
+  when: java_set_as_default and (java_jdk_type == 'oracle')

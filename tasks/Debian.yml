@@ -1,18 +1,18 @@
 ---
 
 #
-# Set java_packages parameter
+# Set java_package parameter
 #
 
-- name: Debian | Define openjdk java_packages
+- name: Debian | Define openjdk java_package
   set_fact:
-    java_packages: "{{ java.openjdk.debian_packages }}"
-  when: (java_packages is not defined) and (java_jdk_type == 'openjdk')
+    java_package: "{{ java.openjdk.debian_package }}"
+  when: (java_package|trim == '') and (java_jdk_type == 'openjdk')
 
-- name: Debian | Define Oracle java_packages
+- name: Debian | Define Oracle java_package
   set_fact:
-    java_packages: "{{ java.oracle.debian_packages }}"
-  when: (java_packages is not defined) and (java_jdk_type == 'oracle')
+    java_package: "{{ java.oracle.debian_package }}"
+  when: (java_package|trim == '') and (java_jdk_type == 'oracle')
 
 #
 # Add/Update APT repository
@@ -35,7 +35,7 @@
   delay: 10
   when: java_jdk_type == 'oracle'
 
-- name: Debian | App WebUpd8 APT repo
+- name: Debian | Add WebUpd8 APT repo
   apt_repository:
     repo: "{{ deb.ubuntu.webupd8_repo }}"
     state: present
@@ -45,7 +45,7 @@
   apt: update_cache=yes cache_valid_time=86400
 
 #
-# Install/Configure Java packages
+# Install/Configure Java package(s)
 #
 
 - name: Debian | Accept Oracle Java License
@@ -57,19 +57,20 @@
 
 - name: Debian | Ensure Java is installed
   apt:
-    name: "{{ item }}"
+    name: "{{ java_package }}"
     state: installed
-  with_items: "{{ java_packages }}"
+  register: install_java_command
+  when: java_package|trim != ''
 
 - name: Debian | Update system openjdk Java version
   alternatives:
     name: java
     path: "/usr/lib/jvm/java-{{ java_version }}-openjdk-amd64/jre/bin/java"
-  when: java_set_as_default and (java_jdk_type == 'openjdk')
+  when: (not install_java_command|skipped) and java_set_as_default and (java_jdk_type == 'openjdk')
 
 - name: Debian | Update system Oracle Java version
   alternatives:
     name: java
     path: "/usr/lib/jvm/java-{{ java_version }}-oracle/jre/bin/java"
-  when: java_set_as_default and (java_jdk_type == 'oracle')
+  when: (not install_java_command|skipped) and java_set_as_default and (java_jdk_type == 'oracle')
 

@@ -2,4 +2,4 @@
 
 - hosts: localhost
   roles:
-    - { role: ansible-java }
+    - ansible-java

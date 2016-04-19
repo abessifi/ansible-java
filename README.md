@@ -1,4 +1,4 @@
-# Ansible Java
+# Ansible Java Role
 
 ## Description
 
@@ -26,28 +26,45 @@ Available variables are listed below, along with default values:
 
 - `java_jdk_type` - The Java Development Toolkit type should be `oracle` or `openjdk` (default: 'openjdk')
 - `java_version` - The Java version to install (default: '7')
-- `java_packages` -  The list of Java JDK package(s) to install (default: [])
+- `java_package` -  The Java JDK package name to install (default: None)
 - `java_set_as_default` - If true, it sets the currently installed Java as system default version (default: false)
+- `oracle_jdk_rpm_package` - The rpm package name to install oracle jdk on Redhat (default: 'jdk-7u79-linux-x64.rpm')
+- `oracle_jdk_rpm_url` - The download url of the oracle jdk rpm package (default: 'http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-x64.rpm')
+- `rpm_download_directory` - The absolute path to a temporary directory where the package will be downloaded to (default: '/var/cache/yum/x86_64/7/extras/packages')
 
 # Usage
 
-## Example Playbook (using default package, usually OpenJDK 7)
+## Install OpenJDK 7 (openjdk default version)
 
     - hosts: localhost
       roles:
         - ansible-java
 
-## Example Playbook (install Oracle JDK 7)
+## Install Oracle JDK 7 (oracle jdk default version)
 
     - hosts: localhost
       roles:
         - { role: ansible-java, java_jdk_type: 'oracle' }
 
-## Example Playbook (install OpenJDK 8 on Debian and set it as default)
+## Install OpenJDK 8 (on Debian and set it as default)
 
     - hosts: localhost
       roles:
-        - { role: ansible-java, java_version: '8', java_packages: ['openjdk-8-jdk'], java_set_as_default: true }
+        - role: ansible-java
+          java_version: 8
+          java_package: 'openjdk-8-jdk'
+          java_set_as_default: true
+
+## Install Oracle JDK 8 (on Redhat and set it as default)
+
+    - hosts: localhost
+      roles:
+        - role: ansible-java
+          java_jdk_type: 'oracle'
+          java_version: 8
+          oracle_jdk_rpm_package: 'jdk-8u77-linux-x64.rpm'
+          oracle_jdk_rpm_url: 'http://download.oracle.com/otn-pub/java/jdk/8u77-b03/jdk-8u77-linux-x64.rpm'
+          java_set_as_default: true
 
 # Development and testing
 
@@ -72,7 +89,7 @@ To list the instances:
     override-java-version-debian-8-x64  Vagrant  AnsiblePlaybook  Busser    Ssh        <Not Created>
     install-oracle-jdk-debian-8-x64     Vagrant  AnsiblePlaybook  Busser    Ssh        <Not Created>
 
-To run the tests with the suite **override-java-version** for instance, run the following:
+To run the tests with the suite **override-java-version** on a Debian 8 platform, for instance, run the following:
 
     $ kitchen test override-java-version-debian-8-x64
 

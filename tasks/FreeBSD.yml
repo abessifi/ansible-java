@@ -1,28 +1,28 @@
 ---
 
 #
-# Set java_packages parameter
+# Set java_package parameter
 #
 
-- name: FreeBSD | Define openjdk java_packages
+- name: FreeBSD | Define openjdk java_package
   set_fact:
-    java_packages: "{{ java.openjdk.freebsd_packages }}"
-  when: (java_packages is not defined) and (java_jdk_type == 'openjdk')
+    java_package: "{{ java.openjdk.freebsd_package }}"
+  when: (java_package|trim == '') and (java_jdk_type == 'openjdk')
 
-- name: FreeBSD | Define Oracle java_packages
+- name: FreeBSD | Define Oracle java_package
   set_fact:
-    java_packages: "{{ java.oracle.freebsd_packages }}"
-  when: (java_packages is not defined) and (java_jdk_type == 'oracle')
+    java_package: "{{ java.oracle.freebsd_package }}"
+  when: (java_package|trim == '') and (java_jdk_type == 'oracle')
 
 #
-# Install/Configure Java packages
+# Install/Configure Java package(s)
 #
 
 - name: FreeBSD | Ensure Java is installed
   pkgng:
-    name: "{{ item }}"
+    name: "{{ java_package }}"
     state: present
-  with_items: "{{ java_packages }}"
+  when: java_package|trim != ''
 
 - name: FreeBSD | ensure proc is mounted
   mount: name=/proc fstype=procfs src=proc opts=rw state=mounted
