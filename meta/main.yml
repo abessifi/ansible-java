@@ -15,7 +15,7 @@ galaxy_info:
         - 8
     - name: Ubuntu
       versions:
-        - 14.04
+        - trusty
     - name: FreeBSD
       versions:
         - 10.2
