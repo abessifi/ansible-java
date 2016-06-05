@@ -3,4 +3,5 @@
 - hosts: localhost
 
   roles:
-    - { role: ansible-java, java_jdk_type: 'oracle' }
+    - role: ansible-java
+      java_jdk_type: 'oracle'

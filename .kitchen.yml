@@ -28,6 +28,14 @@ platforms:
 
 suites:
   - name: default
+    attributes:
+      tags:
+        - install-java
   - name: override-java-version
+    attributes:
+      tags:
+        - install-java
   - name: install-oracle-jdk
-
+    attributes:
+      tags:
+        - install-java

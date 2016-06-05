@@ -32,6 +32,10 @@ Available variables are listed below, along with default values:
 - `oracle_jdk_rpm_url` - The download url of the oracle jdk rpm package (default: 'http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-x64.rpm')
 - `rpm_download_directory` - The absolute path to a temporary directory where the package will be downloaded to (default: '/var/cache/yum/x86_64/7/extras/packages')
 
+## Available tags
+
+- **`install-java`** - Default tag to perform Java JDK installation.
+
 # Usage
 
 ## Install OpenJDK 7 (openjdk default version)
