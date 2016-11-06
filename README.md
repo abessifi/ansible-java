@@ -41,18 +41,21 @@ Available variables are listed below, along with default values:
 ## Install OpenJDK 7 (openjdk default version)
 
     - hosts: localhost
+      sudo: yes
       roles:
         - ansible-java
 
 ## Install Oracle JDK 7 (oracle jdk default version)
 
     - hosts: localhost
+      sudo: yes
       roles:
         - { role: ansible-java, java_jdk_type: 'oracle' }
 
 ## Install OpenJDK 8 (on Debian and set it as default)
 
     - hosts: localhost
+      sudo: yes
       roles:
         - role: ansible-java
           java_version: 8
@@ -62,6 +65,7 @@ Available variables are listed below, along with default values:
 ## Install Oracle JDK 8 (on Redhat and set it as default)
 
     - hosts: localhost
+      sudo: yes
       roles:
         - role: ansible-java
           java_jdk_type: 'oracle'
