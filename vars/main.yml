@@ -2,11 +2,11 @@
 
 java:
   openjdk:
-    debian_package: 'openjdk-7-jdk'
-    redhat_package: 'java-1.7.0-openjdk'
+    debian_package: 'openjdk-8-jdk'
+    redhat_package: 'java-1.8.0-openjdk'
     freebsd_package: 'openjdk'
   oracle:
-    debian_package: 'oracle-java7-installer'
+    debian_package: 'oracle-java8-installer'
 
 deb:
   debian:
@@ -18,8 +18,8 @@ deb:
 
 rh:
   redhat:
-    oracle_jdk_rpm_package: "{{ oracle_jdk_rpm_package | default('jdk-7u79-linux-x64.rpm') }}"
-    oracle_jdk_rpm_url: "{{ oracle_jdk_rpm_url | default('http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-x64.rpm') }}"
+    oracle_jdk_rpm_package: "{{ oracle_jdk_rpm_package | default('jdk-8u144-linux-x64.rpm') }}"
+    oracle_jdk_rpm_url: "{{ oracle_jdk_rpm_url | default('http://download.oracle.com/otn-pub/java/jdk/8u144-b01/jdk-8u144-linux-x64.rpm') }}"
     oracle_jdk_download_cookie: 'gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
     rpm_download_directory: "{{ rpm_download_directory | default('/var/cache/yum/x86_64/7/extras/packages') }}"
 

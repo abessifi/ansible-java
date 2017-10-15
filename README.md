@@ -25,11 +25,11 @@ This is an Ansible role to install Oracle/OpenJDK Java on several GNU/Linux syst
 Available variables are listed below, along with default values:
 
 - `java_jdk_type` - The Java Development Toolkit type should be `oracle` or `openjdk` (default: 'openjdk')
-- `java_version` - The Java version to install (default: '7')
+- `java_version` - The Java version to install (default: '8')
 - `java_package` -  The Java JDK package name to install (default: None)
 - `java_set_as_default` - If true, it sets the currently installed Java as system default version (default: false)
-- `oracle_jdk_rpm_package` - The rpm package name to install oracle jdk on Redhat (default: 'jdk-7u79-linux-x64.rpm')
-- `oracle_jdk_rpm_url` - The download url of the oracle jdk rpm package (default: 'http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-x64.rpm')
+- `oracle_jdk_rpm_package` - The rpm package name to install oracle jdk on Redhat (default: 'jdk-8u144-linux-x64.rpm')
+- `oracle_jdk_rpm_url` - The download url of the oracle jdk rpm package (default: 'http://download.oracle.com/otn-pub/java/jdk/8u144-b01/jdk-8u144-linux-x64.rpm')
 - `rpm_download_directory` - The absolute path to a temporary directory where the package will be downloaded to (default: '/var/cache/yum/x86_64/7/extras/packages')
 
 ## Available tags
@@ -38,40 +38,40 @@ Available variables are listed below, along with default values:
 
 # Usage
 
-## Install OpenJDK 7 (openjdk default version)
+## Install OpenJDK 8 (openjdk default version)
 
     - hosts: localhost
       sudo: yes
       roles:
         - ansible-java
 
-## Install Oracle JDK 7 (oracle jdk default version)
+## Install Oracle JDK 8 (oracle jdk default version)
 
     - hosts: localhost
       sudo: yes
       roles:
         - { role: ansible-java, java_jdk_type: 'oracle' }
 
-## Install OpenJDK 8 (on Debian and set it as default)
+## Install OpenJDK 7 (on Debian and set it as default)
 
     - hosts: localhost
       sudo: yes
       roles:
         - role: ansible-java
-          java_version: 8
-          java_package: 'openjdk-8-jdk'
+          java_version: 7
+          java_package: 'openjdk-7-jdk'
           java_set_as_default: true
 
-## Install Oracle JDK 8 (on Redhat and set it as default)
+## Install Oracle JDK 7 (on Redhat and set it as default)
 
     - hosts: localhost
       sudo: yes
       roles:
         - role: ansible-java
           java_jdk_type: 'oracle'
-          java_version: 8
-          oracle_jdk_rpm_package: 'jdk-8u77-linux-x64.rpm'
-          oracle_jdk_rpm_url: 'http://download.oracle.com/otn-pub/java/jdk/8u77-b03/jdk-8u77-linux-x64.rpm'
+          java_version: 7
+          oracle_jdk_rpm_package: 'jdk-7u79-linux-x64.rpm'
+          oracle_jdk_rpm_url: 'http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-x64.rpm'
           java_set_as_default: true
 
 # Development and testing
